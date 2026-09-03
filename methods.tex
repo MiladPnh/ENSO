@@ -5,24 +5,34 @@
 \label{sec:data}
 
 The model is trained and evaluated on monthly fields spanning January 1981 to June 2024
-(522 months), assembled from two reanalyses. Atmospheric and surface variables are taken from
-ERA5 \citep{Hersbach2020}: sea surface temperature (SST), the 10\,m zonal and meridional wind
-components (U10, V10), mean sea-level pressure (MSL), total column water vapour (TCWV), total
-cloud cover (TCC), top-of-atmosphere net long-wave radiation flux, and the surface latent heat,
-sensible heat, and total precipitation fluxes. Subsurface ocean variables are taken from the
-SODA ocean reanalysis \citep{Chepurin2025}: the depth of the $20\deg$C isotherm (Z20, the
-thermocline proxy), sea surface height (SSH), and mixed-layer depth (MLD). Together these
-thirteen channels span the coupled system -- the surface temperature the forecast targets, the
-subsurface structure that carries its memory, and the atmospheric fields through which the
-coupling acts.
+(522 months), assembled from two reanalyses.
 
-Both products are regridded to a common global $321\times1440$ grid and cropped to the tropical
-Pacific, $20\deg$S--$20\deg$N, $120\deg$E--$290\deg$E, giving $161\times681$ points. All fields
-are expressed as anomalies against their monthly climatology.
+Atmospheric and surface variables are taken from ERA5 \citep{Hersbach2020}, monthly means of
+daily means on the native $0.25\dgr$ grid: sea surface temperature (SST), the 10\,m zonal and
+meridional wind components (U10, V10), mean sea-level pressure (MSL), total column
+vertically-integrated water vapour (TCWV), total cloud cover (TCC), top-of-atmosphere net
+long-wave radiation flux, and the surface latent heat, sensible heat, and total precipitation
+fluxes.
+
+Subsurface ocean variables are taken from SODA4 (version 4.15.2)
+\citep{Chepurin2025}, monthly means derived from the five-day product on its native
+$0.1\dgr$ eddy-resolving grid: the depth of the $20\dgr$C isotherm (Z20, the thermocline
+proxy), sea surface height, and mixed-layer depth defined by the temperature criterion. The
+SODA fields are conservatively regridded onto the ERA5 grid before use.
+
+Together these thirteen channels span the coupled system -- the surface temperature the
+forecast targets, the subsurface structure that carries its memory, and the atmospheric fields
+through which the coupling acts. Note that the SST used is the ERA5 field rather than the
+ocean model's own surface temperature, so that the forecast target is defined consistently with
+the atmospheric state.
+
+The combined fields are cropped to the tropical Pacific, $20\dgr$S--$20\dgr$N,
+$120\dgr$E--$290\dgr$E, giving $161\times681$ points per channel, and expressed as anomalies
+against their monthly climatology.
 
 Two derived indices are the quantities the model is ultimately scored on. The Ni\~no 3.4 index
-is the SST anomaly averaged over $5\deg$S--$5\deg$N, $170\deg$W--$120\deg$W. Warm-water volume
-(WWV) is the Z20 anomaly averaged over $5\deg$S--$5\deg$N, $120\deg$E--$280\deg$E; in
+is the SST anomaly averaged over $5\dgr$S--$5\dgr$N, $170\dgr$W--$120\dgr$W. Warm-water volume
+(WWV) is the Z20 anomaly averaged over $5\dgr$S--$5\dgr$N, $120\dgr$E--$280\dgr$E; in
 recharge-oscillator theory \citep{Jin1997} WWV leads SST and constitutes the subsurface memory
 that allows a forecast to extrapolate beyond the current SST anomaly.
 

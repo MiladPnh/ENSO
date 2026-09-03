@@ -12,12 +12,14 @@
 \usepackage{subcaption}
 \usepackage{xcolor}
 
-% Mendeley syncs its own .bib into this Overleaf project - do not create one
-% here. \cite{AuthorYear} keys below are placeholders; each is listed in
-% notation.tex's "citations needed" block until resolved.
+% Bibliography: references.bib is maintained by hand in this repo and every
+% \cite key in the text resolves against it. If a Mendeley-exported .bib is
+% added later, give it a DIFFERENT filename and list both here, e.g.
+% \bibliography{references,mendeley} - BibTeX accepts a comma-separated list.
+% Do NOT let two .bib files define the same key; BibTeX silently takes one.
 \usepackage[round]{natbib}
 
-\renewcommand{\deg}{^{\circ}}
+\newcommand{\dgr}{^{\circ}}
 
 \title{ENSO Forecasting from a Learned Latent Space:\\
 Methods and Results}

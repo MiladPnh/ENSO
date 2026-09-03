@@ -60,10 +60,10 @@ answers this directly.
 \end{figure}
 
 Reconstruction fidelity is scale-dependent: SST anomaly correlation is 0.871 at the native
-$0.25\deg$ grid, rising to 0.944 at $1\deg$, 0.981 at $5\deg$, and 0.995 at $20\deg$ averaging.
+$0.25\dgr$ grid, rising to 0.944 at $1\dgr$, 0.981 at $5\dgr$, and 0.995 at $20\dgr$ averaging.
 The bottleneck discards sub-degree structure and retains the large scale. Both quantities the
 model forecasts survive this round trip well above the grid-point level: Ni\~no 3.4 reaches
-ACC $0.999$, RMSE $0.047\deg$C, amplitude ratio $0.990$; WWV reaches ACC $0.993$, RMSE
+ACC $0.999$, RMSE $0.047\dgr$C, amplitude ratio $0.990$; WWV reaches ACC $0.993$, RMSE
 $0.78\,\mathrm{m}$, amplitude ratio $0.969$. The autoencoder is therefore not the limiting
 factor for the skill reported in the remainder of this section.
 
@@ -82,8 +82,8 @@ intersects the Ni\~no boxes.
 \begin{figure}[t]
   \centering
   \includegraphics[width=\textwidth]{figures/fig03_latent_space.pdf}
-  \caption{The latent coordinates. \textbf{(a)--(c)} SST-anomaly regression footprints (degC
-  per standard deviation of the coordinate) for the three coordinates with above-average
+  \caption{The latent coordinates. \textbf{(a)--(c)} SST-anomaly regression footprints
+  ($\dgr$C per standard deviation of the coordinate) for the three coordinates with above-average
   variance share and the strongest association with Ni\~no 3.4. \textbf{(d)} Variance share of
   all 32 coordinates, shaded by $|r|$ with Ni\~no 3.4. \textbf{(e)} Multitaper spectra of the
   leading coordinates against Ni\~no 3.4, on the same period axis and estimator as
@@ -220,7 +220,7 @@ it retains amplitude, a point developed quantitatively in Sec.~\ref{sec:amplitud
 \subsection{Event discrimination}
 \label{sec:event-auc}
 
-Event thresholds in this section are $\pm1.0\deg$C, not the conventional $\pm0.5$ ONI
+Event thresholds in this section are $\pm1.0\dgr$C, not the conventional $\pm0.5$ ONI
 threshold; this must be stated explicitly, as no number below reproduces under the
 conventional definition. Over 1981--2024 this threshold yields 11 distinct El Ni\~no episodes
 (69 months) and 14 La Ni\~na episodes (64 months); the effective sample size for significance
@@ -234,7 +234,7 @@ which are not independent of one another.
   for La Ni\~na the score is negated so that higher always indicates a more likely event).
   \textbf{(a)} El Ni\~no AUC against lead. \textbf{(b)} La Ni\~na AUC. \textbf{(c)} Paired
   model$-$benchmark differences with 95\% bootstrap intervals. \textbf{(d)} Sensitivity of the
-  leads 12--17 difference to the event threshold, 0.5 to $1.5\deg$C.}
+  leads 12--17 difference to the event threshold, 0.5 to $1.5\dgr$C.}
   \label{fig:event-auc}
 \end{figure}
 
@@ -252,11 +252,11 @@ The model's advantage over the benchmark is therefore an El Ni\~no advantage. Th
 consistent with the sign-symmetry of a linear operator (Sec.~\ref{sec:architecture}), which
 has no mechanism to represent an asymmetric response to warm and cold anomalies, appearing
 here as a measured quantity rather than an architectural assertion. Panel (d) shows this is not
-an artefact of the $\pm1.0\deg$C threshold: the El Ni\~no gain is positive at every threshold
-tested, 0.5 to $1.5\deg$C, and significant from $0.625\deg$C upward, but at the conventional
-$0.5\deg$C threshold it is $+0.054$ [$-0.015$, $+0.124$], not significant -- the model's
+an artefact of the $\pm1.0\dgr$C threshold: the El Ni\~no gain is positive at every threshold
+tested, 0.5 to $1.5\dgr$C, and significant from $0.625\dgr$C upward, but at the conventional
+$0.5\dgr$C threshold it is $+0.054$ [$-0.015$, $+0.124$], not significant -- the model's
 event-discrimination gain is specific to substantial events, and the record cannot resolve it
-at the weak-event threshold. Above approximately $1.05\deg$C the La Ni\~na difference turns
+at the weak-event threshold. Above approximately $1.05\dgr$C the La Ni\~na difference turns
 negative ($-0.014$ to $-0.028$): the operator's residual mildly reduces skill for the
 strongest cold events.
 
@@ -327,7 +327,7 @@ that sits alongside the La Ni\~na asymmetry of Sec.~\ref{sec:event-auc}.
 \end{figure}
 
 Coverage is set by the 24-month fold buffer (Sec.~\ref{sec:validation}): of 25 events with
-$|\mathrm{anomaly}|\ge1.0\deg$C over 1981--2024, the 1992 and 2002 El Ni\~no events have no
+$|\mathrm{anomaly}|\ge1.0\dgr$C over 1981--2024, the 1992 and 2002 El Ni\~no events have no
 hindcast coverage at all, and 2023--24 has only seven initialisations. The four events shown
 were chosen for full coverage and for the range of behaviour they illustrate: the 1997--98 and
 2015--16 El Ni\~nos, and the 1988--89 and 2020--22 La Ni\~nas.
@@ -336,7 +336,7 @@ Regressing forecast peak on observed peak across every event with sufficient cov
 slope of $0.516$ [$0.426$, $0.612$] at lead 6 (21 events; the benchmark reaches $0.446$
 [$0.356$, $0.542$]), falling systematically with lead: $0.734$ at lead 3, $0.516$ at lead 6,
 $0.315$ at lead 9, $0.298$ at lead 12, $0.163$ at lead 18. Even at lead 1 the slope is $0.91$.
-The three strongest observed El Ni\~nos, all near $+2.8\deg$C, illustrate the same shortfall
+The three strongest observed El Ni\~nos, all near $+2.8\dgr$C, illustrate the same shortfall
 directly: 1983-01 (observed $+2.85$, model $+1.30$), 1997-12 (observed $+2.88$, model $+1.27$),
 2015-11 (observed $+2.80$, model $+1.55$). This amplitude shortfall is quantified and explained
 mechanistically in Sec.~\ref{sec:amplitude-tradeoff}: it is not a consequence of the operator
@@ -345,12 +345,12 @@ amplitude that the raw hybrid forecast already carries.
 
 The four case studies illustrate this range of behaviour. For 1997--98, timing is captured from
 approximately nine months before the peak, and the six-month-ahead launch reaches
-$+1.7\deg$C against an observed $+2.9\deg$C; the model then largely misses the transition into
+$+1.7\dgr$C against an observed $+2.9\dgr$C; the model then largely misses the transition into
 the 1998--99 La Ni\~na. The 2015--16 event is the best-captured extreme, reaching $+1.55$ at
 lead 6 with the subsequent decay through 2016 tracked. The 1988--89 La Ni\~na, the strongest
-cold event in the record, reaches approximately $-1.3\deg$C against an observed $-2.5\deg$C at
+cold event in the record, reaches approximately $-1.3\dgr$C against an observed $-2.5\dgr$C at
 lead 6. The 2020--22 multi-year La Ni\~na is the weakest case: the lead-6 forecast is $-0.21$
-against an observed $-1.40\deg$C, and the model stays close to zero while the event persists --
+against an observed $-1.40\dgr$C, and the model stays close to zero while the event persists --
 the same multi-year, La Ni\~na-specific weakness quantified in Sec.~\ref{sec:event-auc}, shown
 here rather than omitted.
 
@@ -368,7 +368,7 @@ through the frozen decoder.
   \caption{The forecast in physical space. \textbf{(a)--(i)} Observed anomaly at the December
   1997 El Ni\~no peak alongside the model forecast for that month launched 6 and 12 months
   earlier, for SST, Z20, and U10. \textbf{(j)} Grid-point anomaly correlation, area-weighted
-  over the equatorial waveguide ($5\deg$S--$5\deg$N, $160\deg$E--$80\deg$W), against lead, for
+  over the equatorial waveguide ($5\dgr$S--$5\dgr$N, $160\dgr$E--$80\dgr$W), against lead, for
   the model and the benchmark. \textbf{(k)} The ratio of forecast to observed spatial standard
   deviation against lead.}
   \label{fig:physical-space}
