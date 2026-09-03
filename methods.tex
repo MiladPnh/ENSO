@@ -1,0 +1,162 @@
+\section{Methods}
+\label{sec:methods}
+
+\subsection{Data}
+\label{sec:data}
+
+The model is trained and evaluated on a monthly reanalysis tensor spanning January 1981 to
+June 2024 (522 months). The source field is cropped to the tropical Pacific,
+$20\deg$S--$20\deg$N, $120\deg$E--$290\deg$E, giving a grid of $161\times681$ points. Thirteen
+channels are retained, spanning the coupled ocean--atmosphere system: sea surface temperature
+(SST), thermocline depth (Z20), sea surface height (SSH), mixed-layer depth (MLD), the zonal
+and meridional wind components (U10, V10), mean sea-level pressure (MSL), total column water
+vapour (TCWV), total cloud cover (TCC), and four surface flux fields -- net long-wave
+radiation, latent heat flux, sensible heat flux, and precipitation rate. All fields are
+expressed as anomalies against their monthly climatology.
+
+Two derived indices are the quantities the model is ultimately scored on. The Ni\~no 3.4 index
+is the SST anomaly averaged over $5\deg$S--$5\deg$N, $170\deg$W--$120\deg$W. Warm-water volume
+(WWV) is the Z20 anomaly averaged over $5\deg$S--$5\deg$N, $120\deg$E--$280\deg$E; in
+recharge-oscillator theory \citep{Jin1997} WWV leads SST and constitutes the subsurface memory
+that allows a forecast to extrapolate beyond the current SST anomaly.
+
+\subsection{Architecture}
+\label{sec:architecture}
+
+The forecast system has three stages: an encoder that compresses the 13-channel field into a
+32-dimensional latent state, a modal operator that advances that state in time, and a decoder
+that reconstructs physical fields from a forecast latent state.
+
+\subsubsection{Encoder}
+
+The encoder is a Swin-style transformer \citep{LiuEtAl2021Swin}. The input is coarse-grained
+by average pooling ($4\times4$) with edge padding, then patch-embedded ($4\times4$ patches)
+into 768 tokens of dimension 96. Six window-attention blocks follow, using three window
+geometries chosen to match the anisotropy of tropical circulation rather than the square
+windows of the original architecture: an $8\times8$ local window, a $4\times16$ zonal window
+matched to the east--west Walker circulation, and a $16\times4$ meridional window matched to
+the north--south Hadley circulation; each geometry is applied twice, once unshifted and once
+shifted. The resulting token features are reduced to a single 32-dimensional latent vector $z$
+by a learned spatial weighting, $z = \sum_p w_p \odot h_p$, where $h_p$ is the token-$p$
+feature and $w_p$ a learned per-token weight (notation, Sec.~\ref{sec:notation}).
+
+The encoder--decoder pair is trained on the full 1981--2024 record as an unsupervised
+representation; it is not fit to any forecasting objective, and both the model and the
+benchmark (Sec.~\ref{sec:blend}) decode through the same frozen decoder, so any comparison
+between them is unaffected by encoder bias.
+
+\subsubsection{Modal operator}
+
+The latent state is advanced by a linear operator with a fixed structure. At initialisation, a
+phase vector is built from a 9-month history: the current state, its 3-month and 8-month
+differences, and a convolutional summary of the 9-month window,
+$[z,\ \Delta_3z,\ \Delta_8z,\ \mathrm{conv}]$.
+
+The operator's time-invariant part is a modal generator,
+\[
+L_0 = Q\,\mathrm{blockdiag}(B_1,B_2,B_3,D)\,Q^{\top},
+\]
+where $Q=\exp(\Omega-\Omega^{\top})$ is orthogonal by construction. Three $2\times2$ blocks
+$B_k$ each represent a damped oscillator in a rotation-plus-decay form, with angular frequency
+$\omega_k$ and damping rate $\sigma_k$ parameterised as $\sigma_k = 0.005 +
+0.045\,\mathrm{sigmoid}(\cdot) > 0$, so stability is imposed by construction rather than
+learned; period is $T_k = 2\pi/\omega_k$. The oscillators are initialised at periods of 2.5,
+4.0, and 6.0 years. $D$ is a diagonal block of 26 non-oscillatory decay modes, giving the full
+32-dimensional state.
+
+The generator is modulated by the calendar to represent ENSO's phase-locking to the seasonal
+cycle (a Floquet system: linear but time-periodic dynamics):
+\[
+L_m = L_0 + \cos\theta_m\,L_c + \sin\theta_m\,L_s, \qquad \theta_m = \frac{2\pi m}{12},
+\]
+giving twelve monthly propagators $\mathcal{T}_m = \exp(L_m)$, $m=1,\dots,12$, from one shared
+generator. $L_c = W_c - W_c^{\top}$ and $L_s = W_s - W_s^{\top}$ are skew-symmetric by
+construction, which constrains the seasonal term to a rotation of the state: it can redirect
+energy between latent directions but cannot add or remove it. All growth and decay is
+therefore confined to $L_0$.
+
+The propagated (linear) path is further modulated by a bounded, state-dependent scalar gain,
+$g(\cdot) = 1 + 0.5\tanh(\cdot) \in [0.5,1.5]$, a function of the initial phase vector; this
+rescales the whole 24-month trajectory by a single factor per forecast and can change
+amplitude but not sign, so it cannot by itself introduce El Ni\~no/La Ni\~na asymmetry.
+
+Two further terms are added to the gained linear path. First, a nonlinear residual,
+$\gamma\cdot\mathrm{MLP}(\cdot)$, where the MLP has 64 hidden units, $\gamma$ is initialised at
+zero and held at zero for the first 40\% of training, and the MLP's final layer is
+zero-initialised. Second, a low-rank direct linear term, $W_{\mathrm{out}}(W_{\mathrm{in}}\,
+\phi)$, where $\phi$ is the phase vector, $W_{\mathrm{in}}$ projects it to rank~4, and
+$W_{\mathrm{out}}$ (zero-initialised) expands back to the full 24-month, 32-dimensional
+output. Both additive terms are functions of the initial phase vector only; neither is applied
+recursively at each forecast step, so the full forecast is
+\[
+\hat z_{1:24} = \underbrace{g\cdot\text{(propagated linear path)}}_{\text{interpretable}} \;+\;
+\gamma\cdot\mathrm{MLP}(\cdot) \;+\; W_{\mathrm{out}}(W_{\mathrm{in}}\,\phi).
+\]
+Figure~1 shows the propagated linear path and the gated nonlinear residual, the two terms that
+carry the paper's central architectural claims; the gain and the low-rank direct term are
+omitted there for legibility but are both included, and both zero- or near-zero-initialised,
+in every trained model.
+
+\subsection{Forecast: blending with an observable benchmark}
+\label{sec:blend}
+
+The reported forecast is not the operator's raw output. It is a fixed-weight blend of the
+hybrid (operator) forecast with an observable-predictor benchmark,
+\[
+\hat y(l) = \mathrm{benchmark}(l) + \alpha(l)\,\bigl[\mathrm{hybrid}(l) -
+\mathrm{benchmark}(l)\bigr], \qquad
+\alpha(l) = \begin{cases} 0.25 & l = 1,\dots,18 \\ 0 & l = 19,\dots,24. \end{cases}
+\]
+The benchmark is a per-fold ordinary least-squares map from four observed predictors at
+initialisation -- Ni\~no 3.4, WWV, and their 3-month tendencies -- to the 32-dimensional latent
+anomaly at lead $l$. $\alpha$ is a fixed constant, not a fitted parameter: results are flat for
+$\alpha\in[0.15,0.40]$, and the lead-18 cutoff is set by where the operator's residual stops
+carrying statistically significant information, not by tuning ACC.
+
+Because the blend is linear in $\alpha$, it is possible to compute skill and amplitude for any
+value of $\alpha$ without retraining, using only the stored benchmark and raw hybrid forecasts;
+this is used in Sec.~\ref{sec:results} to characterise the blend as a quantified trade rather
+than a fixed, unexamined choice.
+
+\subsection{Validation protocol}
+\label{sec:validation}
+
+Skill is assessed by temporal cross-validation over four folds -- 1981--1991, 1991--2002,
+2002--2013, 2013--2024 -- with a 24-month buffer removed around each held-out period so that no
+verification target overlaps, even partially, with any training window. Ten random seeds are
+trained per fold, giving 40 trained models in total; reported skill is the seed ensemble unless
+stated otherwise. In total there are 394 verification windows, each a full 24-month forecast,
+spanning 42 independent winters.
+
+Three reference forecasts are reported alongside the model: the observable-predictor benchmark
+(Sec.~\ref{sec:blend}); persistence, the observed Ni\~no 3.4 anomaly at initialisation held
+flat; and climatology (zero anomaly), against which RMSE is normalised in
+Sec.~\ref{sec:results} so that a value of 1.0 corresponds exactly to a climatological forecast.
+
+Uncertainty is quantified throughout by a paired year-block bootstrap: the 36 distinct
+initialisation years are resampled with replacement as blocks (rather than resampling
+individual, overlapping 24-month windows, which are not independent), and the model and
+benchmark are recomputed on the same resampled set so that comparisons remain paired. Unless
+noted otherwise, this uses 10\,000 draws (seed 0) for the deterministic skill and seasonal
+results and 5\,000 draws (seed 0) for the event-discrimination and case-study results. All
+reported intervals are 95\%, and significance is stated as $p<0.05$ or as a 95\% confidence
+interval excluding zero -- never as a value of $\alpha$, which is reserved exclusively for the
+blend weight (Sec.~\ref{sec:notation}).
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig01_schematic.pdf}
+  \caption{The three stages of the forecast system. \textbf{(1) Encode.} Thirteen monthly
+  physical fields on a $161\times681$ tropical-Pacific grid are coarse-grained and
+  patch-embedded into 768 tokens, passed through six window-attention blocks whose windows are
+  shaped to match the tropical circulation, and reduced by a learned spatial weighting to a
+  32-dimensional state $z$. \textbf{(2) Propagate.} A phase vector built from a 9-month history
+  drives a modal generator $L_0$ containing three damped oscillators and 26 decay modes; a
+  Floquet seasonal modulation produces one propagator per calendar month; a $\gamma$-gated MLP
+  supplies the shown nonlinear correction (a state-dependent gain and a low-rank direct linear
+  term, both present in every trained model, are omitted here for legibility --
+  Sec.~\ref{sec:architecture}). \textbf{(3) Forecast.} The hybrid latent trajectory is blended
+  with an observable-predictor benchmark at fixed weight $\alpha=0.25$ out to lead 18, then
+  decoded through the frozen Swin decoder to Ni\~no 3.4 and WWV over 24 monthly leads.}
+  \label{fig:workflow}
+\end{figure}

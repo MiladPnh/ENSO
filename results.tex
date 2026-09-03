@@ -1,0 +1,129 @@
+\section{Results}
+\label{sec:results}
+
+% ==================================================================
+% STATUS (remove before submission): only 5.1 is written in full, as
+% the worked example for every number-to-source standard the rest of
+% this section must follow. Every other subsection is a stub with its
+% PAPER_HANDOFF.md anchor named, so nothing here is silently treated
+% as finished. Fill in order; do not reorder without checking
+% cross-references (Sec.~\ref{sec:skill} is referenced from later
+% subsections that synthesise across figures).
+% ==================================================================
+
+\subsection{Autoencoder fidelity}
+\label{sec:ae-fidelity}
+\textit{[TODO -- source: PAPER\_HANDOFF.md \S ``Figure 2 - autoencoder fidelity''. Headline:
+the 32-D bottleneck is a spatial-scale filter, not a uniform compressor -- grid-point SST ACC
+0.871 rising to 0.995 at $20\deg$ averaging; every index the model forecasts (Ni\~no 3.4, WWV)
+round-trips above 0.99.]}
+
+\subsection{What the latent coordinates are}
+\label{sec:latent-coords}
+\textit{[TODO -- source: \S ``Figure 3''. Headline: participation ratio 28.9/32 (the space is
+nearly white by design); ENSO is concentrated in one coordinate (coordinate 14, $|r|=0.874$
+with Ni\~no 3.4); only 2 of 32 coordinates exceed $|r|=0.5$.]}
+
+\subsection{The modal spectrum}
+\label{sec:modal-spectrum}
+\textit{[TODO -- source: \S ``Modal spectrum -- AUDITED''. Headline: all 40 models converge on
+periods $2.405\pm0.041$, $3.864\pm0.115$, $5.729\pm0.127$ years; only the 2.41-year mode is
+excited (3.2$\times$ an isotropic baseline); mode 3 fails three independent significance tests
+and must not be presented as an established third ENSO band. State the three caveats
+(in-band initialisation, imposed stability, only the damping ordering is a genuine emergent
+result) explicitly -- do not soften them.]}
+
+\subsection{Deterministic skill versus lead}
+\label{sec:skill}
+
+Figure~\ref{fig:skill} shows anomaly correlation, the paired model$-$benchmark difference, and
+normalised RMSE as a function of lead, for the model, the observable-predictor benchmark, and
+persistence.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig05_skill_vs_lead.pdf}
+  \caption{Deterministic skill against lead time. \textbf{(a)} Anomaly correlation of the
+  model, the benchmark, and persistence, with 95\% paired year-block bootstrap bands and the
+  ACC$=0.5$ crossings shown with their own confidence intervals. \textbf{(b)} The paired
+  model$-$benchmark difference; leads 19--24 are identically zero by construction
+  ($\alpha(l)=0$ there) and are shaded. \textbf{(c)} RMSE normalised by the per-lead observed
+  standard deviation, so that 1.0 corresponds to a climatological forecast.}
+  \label{fig:skill}
+\end{figure}
+
+Over leads 1--18, mean ACC is 0.619 for the model against 0.565 for the benchmark, a paired
+difference of $+0.054$ [$+0.003$, $+0.104$], significant at 95\%. Per-lead, the model
+significantly exceeds the benchmark at leads 1--7 (lead 8 is borderline: $+0.064$
+[$-0.009$, $+0.132$]); it significantly exceeds persistence at leads 2--24. The gain is
+front-loaded in significance but largest in absolute terms at intermediate lead, reaching
+$+0.077$ to $+0.081$ at leads 12--14, where it is not significant because the bootstrap
+interval widens with lead. By construction, $\alpha(l)=0$ for $l>18$, so the model and
+benchmark are identical over leads 19--24 and their paired difference is exactly zero at every
+one of those leads -- a consequence of the blend weight, not a null result.
+
+The ACC$=0.5$ crossing is 12.38 months [6.93, 18.60] for the model against 9.76
+[6.14, 16.18] for the benchmark, a gain of $+2.61$ months [$-0.33$, $+9.93$] that does
+\emph{not} exclude zero. This crossing is a threshold statistic -- it reads off where a noisy
+curve intersects a fixed level, so a small fluctuation in ACC moves it disproportionately --
+and it is reported here as descriptive rather than as a claim of significance; the leads 1--18
+mean difference and the per-lead significance above are the results this paper's claims rest
+on.
+
+Normalised RMSE (Fig.~\ref{fig:skill}c) never reaches 1.0 for either the model or the
+benchmark within the 24-month window (peaking at 0.976 near lead 20), so neither forecast is
+worse than climatology at any lead considered, though the margin is negligible beyond
+$\sim$lead 18. Persistence, by contrast, crosses 1.0 at lead 5.2 and continues to rise. By
+lead~12, both the model and the benchmark have decayed to approximately the observed spread in
+RMSE terms while ACC remains near 0.5: the forecast retains phase information for longer than
+it retains amplitude, a point developed quantitatively in Sec.~\ref{sec:amplitude-tradeoff}.
+
+\subsection{Event discrimination}
+\label{sec:event-auc}
+\textit{[TODO -- source: \S ``Figure 6''. Headline: event threshold is $\pm1.0\deg$C, not the
+conventional $\pm0.5$ ONI -- state this explicitly, nothing reproduces without it. El Ni\~no
+AUC gain over benchmark is significant (leads 12--17: $+0.104$ [$+0.027$,$+0.196$]); La Ni\~na
+gain is not ($+0.010$ [$-0.053$, $+0.085$]). At the conventional $0.5\deg$C threshold the El
+Ni\~no gain is $+0.054$ [$-0.015$, $+0.124$], not significant -- state this too.]}
+
+\subsection{Seasonality of skill}
+\label{sec:seasonality}
+\textit{[TODO -- source: \S ``Figure 7''. Headline: DJF holds CI above 0.5 through lead 7;
+JJA is the weak season, losing CI-above-zero after lead 21. Do NOT describe the
+initialisation-month view as evidence of a spring predictability barrier -- it is an exact
+shear of the target-month view (verified, max$|$difference$|=0$), not independent evidence.]}
+
+\subsection{Event case studies and the amplitude shortfall}
+\label{sec:case-studies}
+\textit{[TODO -- source: \S ``Figure 8''. Headline: amplitude regression slope 0.516
+[0.426,0.612] at lead 6 (21 events); the shortfall deepens with lead (0.73 at lead 3 to 0.16 at
+lead 18). Cross-reference Sec.~\ref{sec:amplitude-tradeoff} for why this is a blend-weight
+choice, not evidence the operator cannot represent large anomalies.]}
+
+\subsection{The forecast in physical space}
+\label{sec:physical-space}
+\textit{[TODO -- source: \S ``FIGURE 9''. Headline: equatorial-waveguide grid-point ACC (not
+the whole-basin average, which dilutes it by $\sim$0.3) is 0.740 at lead 1 falling to 0.196 at
+lead 24; Z20 (thermocline) is forecast as well as SST at every lead, independent support for
+Sec.~\ref{sec:ablations}'s finding that the full latent state is needed.]}
+
+\subsection{Ablations}
+\label{sec:ablations}
+\textit{[TODO -- source: \S\S ``EXP-1'', ``EXP-2/EXP-3'', ``CV-O2 RESULT''. Three results, all
+null or closed, each defending a design choice: (i) restricting the operator to an 8-D ENSO
+subspace costs $-0.068$ ACC -- the full 32-D state is necessary even though the forecast
+\emph{output} is concentrated in one coordinate; (ii) a fourth oscillator and an explicit
+amplitude nonlinearity were both tested with a proper paired, multi-fold protocol and neither
+improved skill (mode count: pooled $+0.0030\pm0.0145$, $t=1.31$, 20/40 seeds better -- not
+significant; nonlinearity: given the means to amplify, the operator learned additional
+damping instead).]}
+
+\subsection{The amplitude--correlation trade}
+\label{sec:amplitude-tradeoff}
+\textit{[TODO -- source: \S ``FIGURE 10''. Headline: the raw, unblended hybrid forecast already
+carries 0.73 of observed amplitude at lead 6 (exceeding the blended forecast's 0.52); the
+published $\alpha=0.25$ discards most of it because doing so maximises ACC. Restoring full
+amplitude requires $\alpha\approx1.97$ (solved exactly, not by grid search) and costs 0.19 ACC.
+This reframes Secs.~\ref{sec:case-studies} and \ref{sec:skill}'s amplitude shortfall as a
+quantified calibration choice, not a structural limitation of the operator -- state this
+explicitly, it corrects the natural first reading of Sec.~\ref{sec:case-studies}.]}

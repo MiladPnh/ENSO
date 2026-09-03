@@ -1,0 +1,95 @@
+\section*{Notation}
+\label{sec:notation}
+
+Every symbol below is used identically in Methods and Results, in Figure~1's rendered
+equations, and in the internal project record (\texttt{PAPER\_HANDOFF.md}). Two collisions
+present in earlier drafts were resolved before any prose was written and must not be
+reintroduced:
+\begin{itemize}
+  \item $\mathcal{T}_m$ (the monthly Floquet propagator) is distinct from $T_k$ (the period of
+        oscillator $k$). An earlier draft used the bare letter $T_m$ for both objects.
+  \item $\alpha(l)$ is reserved exclusively for the forecast blend weight. Significance is
+        always written out as $p<0.05$ or ``95\% CI excludes zero,'' never as
+        ``$\alpha = 0.05$.''
+\end{itemize}
+
+\subsection*{Encoder}
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning \\
+\midrule
+$z \in \mathbb{R}^{32}$ & Latent state: the 32-D encoder output \\
+$w_p$ & Learned spatial weight at token $p$ \\
+$h_p$ & Encoder feature at token $p$ \\
+& \quad ($z = \sum_p w_p \odot h_p$: the learned spatial weighting) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Modal operator}
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning \\
+\midrule
+$L_0$ & Time-invariant modal generator, $L_0 = Q\,\mathrm{blockdiag}(B_1,B_2,B_3,D)\,Q^{\top}$ \\
+$Q$ & Learned orthogonal basis (matrix exponential of a skew-symmetric matrix) \\
+$B_k$ & $2\times2$ block for oscillator $k$: rotation at $\omega_k$, decay at $\sigma_k$ \\
+$\omega_k$ & Angular frequency of oscillator $k$ \\
+$\sigma_k$ & Damping rate of oscillator $k$ ($\sigma_k>0$ by construction) \\
+$T_k$ & Period of oscillator $k$, $T_k = 2\pi/\omega_k$ \\
+$D$ & Diagonal block of 26 non-oscillatory decay modes \\
+$\theta_m$ & Calendar-month phase, $\theta_m = 2\pi m/12$ \\
+$L_c,\ L_s$ & Skew-symmetric Floquet (seasonal) terms, $L_c=W_c-W_c^{\top}$, $L_s=W_s-W_s^{\top}$ \\
+$L_m$ & Month-$m$ generator, $L_m = L_0 + \cos\theta_m\,L_c + \sin\theta_m\,L_s$ \\
+$\mathcal{T}_m$ & Month-$m$ propagator, $\mathcal{T}_m = \exp(L_m)$ -- \emph{not} $T_k$ (period) \\
+$\gamma$ & Gate on the nonlinear residual (initialised at 0, frozen for 40\% of training) \\
+$g$ & State-dependent gain on the linear path, $g=1+0.5\tanh(\cdot)\in[0.5,1.5]$ \\
+$\phi$ & Phase vector at initialisation, $\phi=[z,\Delta_3z,\Delta_8z,\mathrm{conv}]$ \\
+$W_{\mathrm{in}}, W_{\mathrm{out}}$ & Low-rank (rank 4) direct linear term, $W_{\mathrm{out}}(W_{\mathrm{in}}\phi)$ \\
+$\hat z_{1:24}$ & 24-month hybrid latent forecast \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Forecast and blend}
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning \\
+\midrule
+$l$ & Lead time, in months ($l = 1,\dots,24$) \\
+$\alpha(l)$ & Blend weight: $0.25$ for $l\le18$, $0$ for $l>18$. Used throughout this study \\
+$\hat y(l)$ & Final forecast: $\hat y(l) = \mathrm{benchmark}(l) + \alpha(l)\,[\mathrm{hybrid}(l)-\mathrm{benchmark}(l)]$ \\
+$f$ & Temporal cross-validation fold, $f \in \{0,1,2,3\}$ \\
+N3.4, WWV & Ni\~no 3.4 index; warm-water volume \\
+$\Delta_3(\cdot)$ & 3-month tendency of a quantity \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Statistics}
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning \\
+\midrule
+ACC & Anomaly correlation coefficient \\
+AUC & Mann--Whitney ROC area (event discrimination) \\
+95\% CI & From a paired year-block bootstrap (block = initialisation year), throughout \\
+$p<0.05$ & Significance threshold -- always spelled out, never written as $\alpha$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ------------------------------------------------------------------
+% CITATIONS NEEDED -- Mendeley syncs its own .bib into this Overleaf
+% project; do not add a references.bib here. Resolve each \cite key
+% below to a real Mendeley entry before the final compile.
+%   \cite{Bjerknes1969}        - the atmosphere-ocean feedback the model exploits
+%   \cite{Jin1997}             - recharge-oscillator theory (WWV as ENSO memory)
+%   \cite{HamEtAl2019}         - deep-learning ENSO forecasting, for Methods comparison
+%   \cite{LiuEtAl2021Swin}     - Swin Transformer, the encoder's base architecture
+%   \cite{ERA5}                - reanalysis data source, for the Data subsection
+% ------------------------------------------------------------------
