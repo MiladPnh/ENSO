@@ -4,15 +4,21 @@
 \subsection{Data}
 \label{sec:data}
 
-The model is trained and evaluated on a monthly reanalysis tensor spanning January 1981 to
-June 2024 (522 months). The source field is cropped to the tropical Pacific,
-$20\deg$S--$20\deg$N, $120\deg$E--$290\deg$E, giving a grid of $161\times681$ points. Thirteen
-channels are retained, spanning the coupled ocean--atmosphere system: sea surface temperature
-(SST), thermocline depth (Z20), sea surface height (SSH), mixed-layer depth (MLD), the zonal
-and meridional wind components (U10, V10), mean sea-level pressure (MSL), total column water
-vapour (TCWV), total cloud cover (TCC), and four surface flux fields -- net long-wave
-radiation, latent heat flux, sensible heat flux, and precipitation rate. All fields are
-expressed as anomalies against their monthly climatology.
+The model is trained and evaluated on monthly fields spanning January 1981 to June 2024
+(522 months), assembled from two reanalyses. Atmospheric and surface variables are taken from
+ERA5 \citep{Hersbach2020}: sea surface temperature (SST), the 10\,m zonal and meridional wind
+components (U10, V10), mean sea-level pressure (MSL), total column water vapour (TCWV), total
+cloud cover (TCC), top-of-atmosphere net long-wave radiation flux, and the surface latent heat,
+sensible heat, and total precipitation fluxes. Subsurface ocean variables are taken from the
+SODA ocean reanalysis \citep{Chepurin2025}: the depth of the $20\deg$C isotherm (Z20, the
+thermocline proxy), sea surface height (SSH), and mixed-layer depth (MLD). Together these
+thirteen channels span the coupled system -- the surface temperature the forecast targets, the
+subsurface structure that carries its memory, and the atmospheric fields through which the
+coupling acts.
+
+Both products are regridded to a common global $321\times1440$ grid and cropped to the tropical
+Pacific, $20\deg$S--$20\deg$N, $120\deg$E--$290\deg$E, giving $161\times681$ points. All fields
+are expressed as anomalies against their monthly climatology.
 
 Two derived indices are the quantities the model is ultimately scored on. The Ni\~no 3.4 index
 is the SST anomaly averaged over $5\deg$S--$5\deg$N, $170\deg$W--$120\deg$W. Warm-water volume
