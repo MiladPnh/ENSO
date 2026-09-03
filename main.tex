@@ -27,14 +27,56 @@ Methods and Results}
 \begin{document}
 \maketitle
 
+% ------------------------------------------------------------------
+% AGU REQUIRED ELEMENTS. JGR: Machine Learning and Computation requires
+% Key Points (exactly 3, each <=140 characters), a Plain Language
+% Summary written for a non-specialist audience, and an Open Research
+% section. Check the current author guide before submission -- these
+% are reproduced here from the AGU general requirements.
+% ------------------------------------------------------------------
+
+\section*{Key Points}
+\begin{itemize}
+  \item A 32-dimensional learned latent state advanced by a seasonally modulated linear
+        operator forecasts Ni\~no 3.4 to ACC 0.62 over leads 1--18
+  \item Skill gains over an observable-predictor benchmark are specific to El Ni\~no events,
+        boreal-winter targets, and leads 12--17
+  \item The forecast's amplitude shortfall is a blend-weight calibration choice, not a
+        dynamical limit; restoring full amplitude costs 0.19 ACC
+\end{itemize}
+
 \begin{abstract}
 Placeholder -- write last, after Methods and Results are stable. Supervisor is
 writing the Introduction separately.
 \end{abstract}
 
+\section*{Plain Language Summary}
+El Ni\~no and La Ni\~na are the largest year-to-year swings in the Earth's climate, and
+predicting them more than a few months ahead is difficult. Most forecasting systems are either
+large physical simulations, which are expensive and hard to diagnose when they fail, or machine
+learning models, which are accurate but difficult to interpret. We take an intermediate
+approach: a neural network first compresses thirteen physical fields over the tropical Pacific
+into just 32 numbers, and a second, deliberately simple model advances those 32 numbers forward
+in time. Because that second model is simple, we can read off what it learned -- in particular,
+an oscillation with a period of about 2.4 years that decays more slowly than the others. We
+test the forecasts carefully, holding out four separate decades in turn, and we report not only
+where the system works but where it does not: its advantage over a simple statistical baseline
+is concentrated in warm events and in winter, and it systematically under-predicts how large
+events become. We show that this last shortcoming is not a limitation of the model's physics
+but a deliberate trade-off, and we measure exactly what correcting it would cost in accuracy.
+
 \input{notation}
 \input{methods}
 \input{results}
+
+\section*{Open Research}
+\textit{[TODO before submission -- AGU requires data and software availability statements with
+persistent identifiers. Needed: (i) a DOI-issuing archive (Zenodo or similar) for the
+autoencoder checkpoint, the 40 trained operator state dicts, the cross-validated forecast
+arrays, and the figure-generating notebook cells; (ii) a citation for the source reanalysis
+with its access location; (iii) a statement that all figures in this paper are reproducible
+from the archived arrays. A GitHub URL alone does not satisfy AGU -- the archive must be
+immutable and citable.]}
 
 \bibliographystyle{plainnat}
 \bibliography{references}

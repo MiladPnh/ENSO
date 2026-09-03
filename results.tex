@@ -11,6 +11,34 @@
 % Mendeley, (4) the abstract in main.tex, still a placeholder.
 % ==================================================================
 
+Table~\ref{tab:headline} summarises the quantitative claims this section supports, together
+with the results that do \emph{not} reach significance. Each is derived in the subsection
+indicated.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{@{}llccl@{}}
+\toprule
+Quantity & Window & Model & Benchmark & Paired difference \\
+\midrule
+ACC & leads 1--18 & 0.619 & 0.565 & $+0.054$ [$+0.003$, $+0.104$] \textbf{sig.} \\
+ACC & leads 8--19 & 0.480 & 0.421 & $+0.059$ [$-0.009$, $+0.127$] n.s. \\
+El Ni\~no AUC & leads 12--17 & 0.825 & 0.722 & $+0.104$ [$+0.027$, $+0.196$] \textbf{sig.} \\
+La Ni\~na AUC & leads 12--17 & 0.685 & 0.675 & $+0.010$ [$-0.053$, $+0.085$] n.s. \\
+DJF ACC & lead 12 & 0.572 & 0.477 & $+0.095$ [$+0.007$, $+0.178$] \textbf{sig.} \\
+JJA ACC & lead 18 & 0.218 & 0.283 & $-0.065$ [$-0.198$, $+0.048$] n.s. \\
+ACC$=0.5$ crossing & --- & 12.4\,mo & 9.8\,mo & $+2.61$ [$-0.33$, $+9.93$] n.s. \\
+Amplitude slope & lead 6 & 0.516 & 0.446 & (see Sec.~\ref{sec:amplitude-tradeoff}) \\
+\bottomrule
+\end{tabular}
+\caption{Headline results. All intervals are 95\%, from a paired year-block bootstrap
+(Sec.~\ref{sec:validation}). Results that do not reach significance are reported alongside
+those that do; in particular the ACC$=0.5$ crossing, the most quotable single number, is not a
+significant improvement and is not used as a claim in this paper.}
+\label{tab:headline}
+\end{table}
+
 \subsection{Autoencoder fidelity}
 \label{sec:ae-fidelity}
 

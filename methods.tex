@@ -40,6 +40,43 @@ shifted. The resulting token features are reduced to a single 32-dimensional lat
 by a learned spatial weighting, $z = \sum_p w_p \odot h_p$, where $h_p$ is the token-$p$
 feature and $w_p$ a learned per-token weight (notation, Sec.~\ref{sec:notation}).
 
+\subsubsection{Decoder}
+
+The decoder reconstructs physical fields from a latent state through an explicitly
+EOF-like expansion. A latent vector $z\in\mathbb{R}^{32}$ is expanded against a learned
+spatial basis $\Phi$ and added to a learned climatological field $\bar{X}$,
+\[
+\tilde{X} \;=\; \sum_{d=1}^{32} z_d\,\Phi_d \;+\; \bar{X},
+\]
+after which $\tilde{X}$ is mapped back to token space, passed through the decoder's
+window-attention blocks, patch-unembedded, cropped to remove the padding introduced during
+encoding, and bilinearly resampled onto the native $161\times681$ grid. Because the latent
+enters this expansion linearly, each coordinate $z_d$ has a well-defined spatial footprint
+$\Phi_d$ -- the property exploited in Sec.~\ref{sec:latent-coords}, where these footprints are
+used to interpret individual latent coordinates.
+
+\subsubsection{Representation-learning objective}
+\label{sec:ae-loss}
+
+The autoencoder is trained on reconstruction with two penalties applied to the latent code:
+\[
+\mathcal{L}_{\mathrm{AE}} \;=\;
+\underbrace{\big\lVert X - \tilde{X}\big\rVert^2_{\mathrm{MSE}}}_{\text{reconstruction}}
+\;+\; \lambda_{\mathrm{dec}} \sum_{i\neq j} \big[\mathrm{Corr}(z)\big]_{ij}^{2}
+\;+\; \lambda_{2}\,\mathbb{E}\!\left[\lVert z\rVert^2\right],
+\]
+with $\lambda_{\mathrm{dec}}=10^{-4}$ and $\lambda_{2}=10^{-3}$. $\mathrm{Corr}(z)$ is the
+$32\times32$ correlation matrix of the latent code computed across the minibatch after
+standardising each coordinate; the second term therefore penalises the sum of squared
+off-diagonal correlations, driving the latent coordinates towards mutual decorrelation, while
+the third bounds their magnitude.
+
+This objective is the reason the latent space is close to isotropic rather than an ordered,
+variance-ranked hierarchy: it explicitly removes the incentive to concentrate variance in a
+few leading directions. The consequence -- a participation ratio of 28.9 of 32, and the
+resulting fact that ranking coordinates by variance alone is uninformative -- is measured in
+Sec.~\ref{sec:latent-coords}, and is a property of this loss rather than an emergent finding.
+
 The encoder--decoder pair is trained on the full 1981--2024 record as an unsupervised
 representation; it is not fit to any forecasting objective, and both the model and the
 benchmark (Sec.~\ref{sec:blend}) decode through the same frozen decoder, so any comparison
@@ -117,6 +154,48 @@ Because the blend is linear in $\alpha$, it is possible to compute skill and amp
 value of $\alpha$ without retraining, using only the stored benchmark and raw hybrid forecasts;
 this is used in Sec.~\ref{sec:results} to characterise the blend as a quantified trade rather
 than a fixed, unexamined choice.
+
+\subsection{Training the operator}
+\label{sec:training}
+
+The operator is trained to predict the latent trajectory as a residual on the benchmark: for
+each initialisation, the network output is added to the benchmark's latent prediction
+(Sec.~\ref{sec:blend}) and the sum is scored. The objective combines four terms, applied both
+in latent space and, after decoding, at the two indices the paper reports:
+\[
+\mathcal{L} \;=\;
+\underbrace{\mathcal{L}^{\mathrm{MSE}}_{\mathrm{lat}}
++ \mathcal{L}^{\mathrm{ACC}}_{\mathrm{lat}}}_{\text{latent}}
+\;+\; \frac{1}{|S|}\sum_{l\in S}
+\Big[\,2\,\mathcal{L}^{\mathrm{MSE}}_{\mathrm{N3.4}}(l)
++ \mathcal{L}^{\mathrm{ACC}}_{\mathrm{N3.4}}(l)
++ 2\,\mathcal{L}^{\mathrm{MSE}}_{\mathrm{WWV}}(l)
++ \mathcal{L}^{\mathrm{ACC}}_{\mathrm{WWV}}(l)\Big].
+\]
+Here $\mathcal{L}^{\mathrm{ACC}} = 1 - r$, with $r$ the Pearson correlation computed across the
+minibatch, so that correlation is optimised directly rather than only through squared error.
+The latent MSE term is weighted linearly by lead, from $0.5$ at lead 1 to $3.0$ at lead 24, so
+that long leads -- where the forecast is hardest and where an unweighted MSE would contribute
+least -- are not dominated by short leads.
+
+The index terms require decoding, which is expensive to apply at all 24 leads for every
+minibatch. Instead, $S$ is a random subset of six leads drawn per minibatch without replacement,
+with sampling probability increasing linearly with lead over the same $0.5$--$3.0$ range; the
+WWV term is normalised by the training-period standard deviation of the WWV anomaly so that the
+two indices contribute on comparable scales. Because the decoder is frozen, gradients from
+these index terms propagate back through it into the operator without changing the
+representation.
+
+Optimisation uses CA-AdamW, a curvature-aware variant of AdamW
+\citep{CAAdamW}, with learning rate $10^{-3}$, weight decay $10^{-4}$, curvature scale
+$\alpha_{\mathrm{base}}=0.1$, and a cosine-annealed schedule decaying to $10^{-4}$; gradients
+are clipped to unit norm. Models are trained for 301 epochs with a batch size of 32. The gate
+$\gamma$ on the nonlinear residual is held at exactly zero for the first 40\% of epochs and
+released thereafter, so the linear operator is fit before any nonlinear correction becomes
+available. The autoencoder is trained separately and beforehand, for 3000 epochs at batch size
+32, using CA-AdamW with learning rate $2\times10^{-3}$, weight decay $10^{-4}$, a warm-up of 50
+steps followed by cosine decay to $5\times10^{-4}$, unit-norm gradient clipping, and mixed
+precision.
 
 \subsection{Validation protocol}
 \label{sec:validation}
