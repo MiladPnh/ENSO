@@ -92,10 +92,15 @@ $p<0.05$ & Significance threshold -- always spelled out, never written as $\alph
 %   \cite{HamEtAl2019}         - deep-learning ENSO forecasting, for Methods comparison
 %   \cite{LiuEtAl2021Swin}     - Swin Transformer, the encoder's base architecture
 %   \cite{ERA5}                - reanalysis data source, for the Data subsection
-%   \cite{CAAdamW}             - "Lightweight Geometric Adaptation for Training
-%                                Physics-Informed Neural Networks" (Algorithm 1).
-%                                REQUIRED: the optimiser is NOT standard AdamW.
-%                                Milad: confirm the full reference for this paper.
+%   \cite{AnEtAl2026}          - CONFIRMED 2026-09-04. Kang An, Chenhao Si, Shiqian Ma,
+%                                Ming Yan, "Lightweight Geometric Adaptation for Training
+%                                Physics-Informed Neural Networks", arXiv:2604.15392 (2026).
+%                                This is Algorithm 1, the CA-AdamW optimiser actually used.
+%                                NOT arXiv:2411.16085 ("Cautious Optimizers", C-AdamW) -
+%                                that is a different optimiser and was proposed in error;
+%                                the implementation here keeps a secant pair (s_k, g_diff)
+%                                and a curvature inner product, which is the geometric
+%                                method, not the cautious sign mask.
 %   \cite{Thomson1982}         - multitaper spectral estimation (Secs. modal-spectrum,
 %                                latent-coords use DPSS multitaper with NW=2, K=3)
 % ------------------------------------------------------------------

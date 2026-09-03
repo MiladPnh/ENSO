@@ -46,8 +46,27 @@ Methods and Results}
 \end{itemize}
 
 \begin{abstract}
-Placeholder -- write last, after Methods and Results are stable. Supervisor is
-writing the Introduction separately.
+Forecasting the El Ni\~no--Southern Oscillation beyond seasonal lead times generally requires
+either dynamical models, which are physically complete but difficult to diagnose when they
+fail, or learned models, which are often skilful but opaque. We take an intermediate approach:
+a transformer autoencoder with circulation-shaped attention windows compresses thirteen
+tropical-Pacific fields into a 32-dimensional latent state, which is then advanced by a
+deliberately simple, seasonally modulated linear operator built from damped oscillators in a
+learned orthogonal basis. Evaluated by four-fold temporal cross-validation with a 24-month
+buffer and paired year-block bootstrap uncertainties, the system reaches an anomaly
+correlation of 0.619 over leads 1--18, exceeding a four-predictor observational benchmark by
+$0.054$ (95\% CI $[0.003, 0.104]$). Because the operator is structurally simple, its learned
+dynamics can be read directly: all 40 trained models converge on a dominant quasi-biennial
+mode at $2.41\pm0.04$ years which becomes the least damped of three, from an initialisation in
+which all damping rates are identical. We report where this skill does and does not exist: the
+advantage over the benchmark is confined to El Ni\~no events, boreal-winter targets, and leads
+12--17, and three controlled ablations -- on latent dimension, oscillator count, and an
+explicit amplitude nonlinearity -- return null results, the latter two under a paired,
+multi-fold protocol that also demonstrates measured selection bias in single-fold model
+development. Finally, we show that the system's well-known underestimation of event amplitude
+is not a dynamical limitation but a calibration choice: the unblended operator already carries
+0.73 of observed amplitude at lead 6, and recovering full amplitude costs 0.19 in anomaly
+correlation.
 \end{abstract}
 
 \section*{Plain Language Summary}
@@ -68,6 +87,7 @@ but a deliberate trade-off, and we measure exactly what correcting it would cost
 \input{notation}
 \input{methods}
 \input{results}
+\input{discussion}
 
 \section*{Open Research}
 \textit{[TODO before submission -- AGU requires data and software availability statements with

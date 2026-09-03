@@ -187,7 +187,7 @@ these index terms propagate back through it into the operator without changing t
 representation.
 
 Optimisation uses CA-AdamW, a curvature-aware variant of AdamW
-\citep{CAAdamW}, with learning rate $10^{-3}$, weight decay $10^{-4}$, curvature scale
+\citep{AnEtAl2026}, with learning rate $10^{-3}$, weight decay $10^{-4}$, curvature scale
 $\alpha_{\mathrm{base}}=0.1$, and a cosine-annealed schedule decaying to $10^{-4}$; gradients
 are clipped to unit norm. Models are trained for 301 epochs with a batch size of 32. The gate
 $\gamma$ on the nonlinear residual is held at exactly zero for the first 40\% of epochs and

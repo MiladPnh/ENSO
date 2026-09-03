@@ -1,0 +1,153 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{What the skill result does and does not show}
+
+The system exceeds a four-predictor observational benchmark by $0.054$ ACC over leads 1--18
+(Sec.~\ref{sec:skill}). Three qualifications are essential to reading that number correctly.
+
+First, the benchmark is deliberately strong. It is an ordinary least-squares map from Ni\~no
+3.4, warm-water volume, and their three-month tendencies -- that is, from the state variables
+that recharge-oscillator theory identifies as the relevant ones
+\citep{Jin1997} -- onto the same latent space, decoded through the same
+frozen decoder. The comparison therefore isolates what the learned operator contributes beyond
+a linear reading of the recognised predictors, rather than measuring skill against a
+deliberately weak reference.
+
+Second, the advantage is narrow rather than uniform. It is significant for El Ni\~no events
+but not La Ni\~na (Sec.~\ref{sec:event-auc}), for boreal-winter targets but not summer
+(Sec.~\ref{sec:seasonality}), and per-lead only at leads 1--7 and 12--16. Sections
+\ref{sec:event-auc} and \ref{sec:seasonality} describe one effect, not two: the operator's
+residual contributes to the mature winter phase of warm events and contributes essentially
+nothing to the summer transition or to cold events. The sign symmetry of a linear operator
+offers a natural explanation for the warm/cold asymmetry, and the seasonal structure follows
+ENSO's own phase-locking, but we note that these are consistent interpretations rather than
+tests: neither is established by the results presented here.
+
+Third, the most quotable statistic in the paper is not a result. The ACC$=0.5$ crossing moves
+from 9.8 to 12.4 months, but its 95\% interval is $[-0.33, +9.93]$ months and does not exclude
+zero. Threshold-crossing statistics on noisy curves are unstable by construction, and we report
+this one descriptively only.
+
+\subsection{How much interpretability the operator actually provides}
+
+All 40 trained models converge on the same three periods, and the ordering of their damping
+rates separates from an identical initialisation -- the strongest emergent result in
+Sec.~\ref{sec:modal-spectrum}, precisely because the damping rates, unlike the periods, begin
+undifferentiated. The 2.41-year quasi-biennial mode becoming the least damped is a physically
+meaningful outcome that a black-box forecaster would not expose.
+
+The interpretability claim should nonetheless be bounded carefully. The periods are initialised
+in-band and are therefore displaced from, rather than discovered independently of, their
+starting values. Stability is imposed by the parameterisation, so the fact that all modes are
+damped carries no information. Only the leading mode is dynamically excited above an isotropic
+baseline; the 5.73-year mode fails three independent tests and should not be presented as an
+established ENSO band. And the ablation in Sec.~\ref{sec:ablations} shows that skill is
+statistically indistinguishable across one to four oscillators. Taken together, the honest
+statement is that the operator recovers \emph{one} dominant, physically recognisable mode plus
+damped memory, and that the specific three-oscillator structure is a modelling convenience
+rather than a result.
+
+\subsection{Three null results, and what they close}
+
+Sections~\ref{sec:ablations} reports three controlled ablations, none of which improved skill:
+restricting the operator to an ENSO-correlated subspace \emph{hurt} it ($-0.068$ ACC), adding a
+fourth oscillator did not survive cross-fold confirmation, and an explicit amplitude
+nonlinearity produced no measurable change.
+
+The first is informative rather than merely negative. It resolves an apparent contradiction
+with Sec.~\ref{sec:latent-coords}: ENSO's forecast \emph{output} is concentrated in a single
+latent coordinate, but the \emph{state} required to predict that coordinate is not, which is
+what recharge-oscillator physics predicts if subsurface structure rather than surface
+temperature carries the memory.
+
+The second is methodological. A single-fold development experiment scored the fourth oscillator
+at $t=5.93$ with 6 of 6 seeds improving; the four-fold paired test scored the same
+configuration at $t=1.31$ with 20 of 40. The effect survived only on the fold that had selected
+it. We report this because the failure mode is general and easy to fall into: with per-seed
+noise of $0.005$ and a development fold of 99 verification windows, a single-fold experiment
+can produce a decisively significant result for a configuration that does not generalise.
+
+The third motivated the analysis in Sec.~\ref{sec:amplitude-tradeoff}. Given the capacity to
+amplify -- a bounded self-amplification term permitting up to roughly a doubling over 24
+months -- the operator instead learned additional damping in five of six oscillator instances.
+
+\subsection{Amplitude is a calibration choice, not a dynamical limit}
+
+We consider this the most transferable result in the paper. The forecast underestimates event
+amplitude substantially: a regression slope of $0.516$ at lead 6
+(Sec.~\ref{sec:case-studies}). The natural reading is that a damped linear operator cannot grow
+an anomaly. That reading is wrong on both counts. The operator can amplify and declines to
+(Sec.~\ref{sec:ablations}), and the unblended operator output already carries a slope of
+$0.729$ -- more than the blended forecast retains. The shortfall is produced by the blend
+weight, which is set to maximise correlation skill, and full amplitude is recoverable at a
+measured, exactly computable cost of $0.19$ ACC (Sec.~\ref{sec:amplitude-tradeoff}).
+
+This decomposition is not specific to our architecture. Any forecast system that blends towards
+a conservative reference, or that is trained or tuned against a correlation-like score, faces
+the same exchange: correlation is invariant to a uniform rescaling of the forecast, so
+optimising it provides no pressure towards calibrated amplitude, and shrinkage toward the mean
+reduces squared error whenever the forecast is uncertain. Systems tuned this way should be
+expected to be systematically under-dispersive, and the magnitude of that effect is measurable
+without retraining wherever the unblended forecast has been retained. We suggest reporting an
+amplitude slope alongside correlation as a matter of routine.
+
+\subsection{Limitations}
+
+The most consequential limitation is the absence of an external baseline. All comparisons here
+are internal -- against the observational benchmark, persistence, and climatology -- so this
+paper establishes what the architecture contributes relative to a linear reading of its own
+predictors, and does \emph{not} establish where it stands relative to operational dynamical
+forecasts or to previously published learned ENSO models. That comparison is the natural next
+step and is required before any claim of competitive skill.
+
+Skill is strongly regime-dependent. Per-fold mean ACC over leads 1--18 ranges from $0.784$
+(1981--1991) to $0.336$ (2002--2013), and the quiet 2002--2013 decade is also roughly twice as
+seed-sensitive as the others. A single pooled skill number understates this spread
+considerably.
+
+The effective sample is small in the way that matters. The record contains 43 years but only 11
+El Ni\~no and 14 La Ni\~na episodes exceeding $1.0\deg$C, which is why event-discrimination
+intervals are wide and why the paired year-block bootstrap, rather than window-level
+resampling, is used throughout. Related, the event threshold used here is $\pm1.0\deg$C rather
+than the conventional $\pm0.5$; at the conventional threshold the El Ni\~no advantage is not
+statistically resolvable.
+
+Finally, leads 19--24 are identical to the benchmark by construction, and forecasts of
+boreal-summer targets at long lead show no demonstrable skill.
+
+\section{Conclusions}
+\label{sec:conclusions}
+
+We have presented an ENSO forecast system in which representation learning and dynamics are
+separated: a transformer autoencoder with circulation-shaped attention windows learns a
+32-dimensional state, and a seasonally modulated linear operator built from damped oscillators
+advances it. The system reaches ACC $0.619$ over leads 1--18, exceeding a strong
+observational-predictor benchmark by $0.054$ ($[0.003, 0.104]$), with the advantage
+concentrated in El Ni\~no events and boreal-winter targets at leads 12--17.
+
+Because the dynamics are structurally simple, they can be inspected. All 40 trained models
+converge on a dominant quasi-biennial mode at $2.41 \pm 0.04$ years which becomes the least
+damped of the three from an initialisation where the damping rates are identical. We have been
+explicit about the limits of that interpretability: the periods are initialised in-band,
+stability is imposed, only the leading mode is excited, and skill is insensitive to whether
+one, two, three, or four oscillators are used.
+
+Three controlled ablations returned null or negative results, and we report them because they
+constrain the design: the full 32-dimensional state is necessary despite ENSO's output being
+concentrated in one coordinate; a fourth oscillator does not survive cross-fold confirmation
+despite appearing decisive on a single development fold; and an explicit amplitude
+nonlinearity changes nothing.
+
+The amplitude finding is the one we expect to generalise beyond this system. The forecast's
+underestimation of event amplitude is not a limitation of its dynamics but a consequence of
+optimising a correlation-like objective, and the exchange rate between amplitude and
+correlation can be computed exactly, without retraining, from forecasts that have already been
+made. We recommend that forecast systems of this kind report an amplitude slope alongside
+correlation, and that the unblended forecast be retained so the trade remains measurable.
+
+The immediate priority for further work is comparison against established dynamical and learned
+ENSO forecasts on a common verification period. Beyond that, given three null results from
+architectural modification, the more promising direction is additional training data --
+a longer reanalysis record or pre-training on coupled-model output -- rather than further
+elaboration of the operator.
