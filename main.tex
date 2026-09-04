@@ -12,11 +12,6 @@
 \usepackage{subcaption}
 \usepackage{xcolor}
 
-% Bibliography: references.bib is maintained by hand in this repo and every
-% \cite key in the text resolves against it. If a Mendeley-exported .bib is
-% added later, give it a DIFFERENT filename and list both here, e.g.
-% \bibliography{references,mendeley} - BibTeX accepts a comma-separated list.
-% Do NOT let two .bib files define the same key; BibTeX silently takes one.
 \usepackage[round]{natbib}
 
 \newcommand{\dgr}{^{\circ}}
@@ -28,14 +23,6 @@ Methods and Results}
 
 \begin{document}
 \maketitle
-
-% ------------------------------------------------------------------
-% AGU REQUIRED ELEMENTS. JGR: Machine Learning and Computation requires
-% Key Points (exactly 3, each <=140 characters), a Plain Language
-% Summary written for a non-specialist audience, and an Open Research
-% section. Check the current author guide before submission -- these
-% are reproduced here from the AGU general requirements.
-% ------------------------------------------------------------------
 
 \section*{Key Points}
 \begin{itemize}
@@ -86,18 +73,17 @@ is concentrated in warm events and in winter, and it systematically under-predic
 events become. We show that this last shortcoming is not a limitation of the model's physics
 but a deliberate trade-off, and we measure exactly what correcting it would cost in accuracy.
 
+\input{introduction}
 \input{notation}
 \input{methods}
 \input{results}
 \input{discussion}
 
 \section*{Open Research}
-\textit{[TODO before submission -- AGU requires data and software availability statements with persistent identifiers. Needed: (i) a DOI-issuing archive (Zenodo or similar) for the
-autoencoder checkpoint, the 40 trained operator state dicts, the cross-validated forecast
-arrays, and the figure-generating notebook cells; (ii) a citation for the source reanalysis
-with its access location; (iii) a statement that all figures in this paper are reproducible
-from the archived arrays. A GitHub URL alone does not satisfy AGU -- the archive must be
-immutable and citable.]}
+\textit{[To be completed: a persistent-identifier archive for the autoencoder checkpoint, the
+40 trained operator state dictionaries, and the cross-validated forecast arrays from which
+every figure in this paper is reproducible, together with access locations for ERA5 and
+SODA4.]}
 
 \bibliographystyle{plainnat}
 \bibliography{references}

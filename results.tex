@@ -1,16 +1,6 @@
 \section{Results}
 \label{sec:results}
 
-% ==================================================================
-% STATUS (remove before submission): all ten subsections written in
-% full, every number sourced from PAPER_HANDOFF.md at time of writing
-% (2026-09-03) rather than from conversational memory. Not yet done:
-% (1) a human read-through end to end for flow/tone, (2) an Overleaf
-% compile check (no local LaTeX engine was available to verify this).
-% DONE since: abstract, Discussion/Conclusions, references.bib with all
-% cite keys resolving, and the data sources corrected to ERA5 + SODA.
-% ==================================================================
-
 Table~\ref{tab:headline} summarises the quantitative claims this section supports, together
 with the results that do \emph{not} reach significance. Each is derived in the subsection
 indicated.
@@ -43,9 +33,10 @@ significant improvement and is not used as a claim in this paper.}
 \label{sec:ae-fidelity}
 
 A 32-dimensional code compressing a $13\times161\times681$ field discards most of its
-sub-degree structure; the relevant question is not whether information is lost, but whether
-the quantities the model is scored on survive the round trip. Figure~\ref{fig:ae-fidelity}
-answers this directly.
+sub-degree structure, at a scale set by the pooling and patch sizes of the encoder
+(Sec.~\ref{sec:compression}); the relevant question is not whether information is lost, but
+whether the quantities the model is scored on survive the round trip.
+Figure~\ref{fig:ae-fidelity} answers this directly.
 
 \begin{figure}[t]
   \centering
